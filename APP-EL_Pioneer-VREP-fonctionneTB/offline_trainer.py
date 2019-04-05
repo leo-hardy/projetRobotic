@@ -14,7 +14,7 @@ sample_command = [] #liste des commandes des roues finales
 #boucle pour générer les combinaisons 1 à 6
 for i in [1/4, 1/2, 3/4, 1] :
     for j in [1/4, 1/2, 3/4, 1] :
-        for theta in [-pi ,-(3*pi)/4,-pi/2,-pi/4,0,pi/4,pi/2,3*pi/4,pi] :
+        for theta in [-pi ,-(3*pi)/4,-pi/2,-pi/4,0,pi/4,pi/2,3*pi/4] :
             sample_position += [[L/i,0,theta],#1
             [L*i,L*j,theta],#2
             [-L*i,L*j,theta],#3
@@ -37,7 +37,7 @@ for k in [(3/4),(1/2),(1/4)]:
     sample_command += [[M,-M],#7
     [-M,M]]#8
 
-#génération du point final    
+#génération du point final   #9
 sample_position += [[0,0,0]]
 sample_command += [[0,0]]
     
@@ -89,6 +89,7 @@ class OfflineTrainer:
         self.alpha = [1/(2*L),1/(2*L),1/(math.pi)]  # normalition avec limite du monde cartesien = -3m à + 3m
         #pourquoi pas avec 1/L ? sinon on va de -0.5 à 0.5.
 
+	#il faut que quand training soit True l'apprentissage soit lancé d'un bloc. Il faut qu'il soit False qd le robot bouge
     def train(self, target):
         
         position = self.robot.get_position()
