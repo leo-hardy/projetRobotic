@@ -86,50 +86,64 @@ class OfflineTrainer:
         self.robot = robot
         self.network = NN
 
-        self.alpha = [1/(2*L),1/(2*L),1/(math.pi)]  # normalition avec limite du monde cartesien = -3m à + 3m
+        self.alpha = [1/(2*L),1/(2*L),1/(2*math.pi)]  # normalition avec limite du monde cartesien = -3m à + 3m
         #pourquoi pas avec 1/L ? sinon on va de -0.5 à 0.5.
 
 	#il faut que quand training soit True l'apprentissage soit lancé d'un bloc. Il faut qu'il soit False qd le robot bouge
     def train(self, target):
-        somme_erreur_av = len(sample_position) * 8 #erreur maximum 
+	
 
-
-		while self.training:
-			
-			#calcul de l'erreur
-			somme_erreur = 0
-			for i in range(len(sample_position)) :
-				position_ponderee = [sample_position[i]/alpha[i] for i in range(3)]
-				command = self.network.runNN(sample_position[i]) # propage erreur et calcul vitesses roues instant t
-				erreur = (command[0]-sample_command[i][0])**2 + (command[1]-sample_command[i][1])**2
-				somme_erreur += erreur
-
-			grad = somme_erreur / (1.0*len(sample_position)) # erreur moyenne
-
-			if somme_erreur < somme_erreur_av :
-					self.network.backPropagate(grad, 0.9,0) # grad, pas d'app, moment : permet de lisser la trajectoire
-					somme_erreur_av = somme_erreur
-			else :
-				self.training = false
-
-
+        somme_erreur_av = [len(sample_position)*4,len(sample_position)*4] #erreur maximum 
+        n_it = 0
+    
+        while self.training:
+	    
+            somme_erreur = [0,0]
+	    #calcul de l'erreur
+            
+            for i in range(len(sample_position)) :
+                command = self.network.runNN(sample_position[i]) # propage erreur et calcul vitesses roues instant t
+                erreur = [(command[0]-sample_command[i][0])**2,(command[1]-sample_command[i][1])**2]
+                somme_erreur[0] += erreur[0]
+                somme_erreur[1] += erreur[1]
+		
+            #print("somme_erreur_av = ["+str(somme_erreur_av[0])+","+str(somme_erreur_av[1])+"]")
+            #print("somme_erreur = ["+str(somme_erreur[0])+","+str(somme_erreur[1])+"]")	    
+    
+            grad = [0,0]
+            grad[0] = somme_erreur[0]/(1*len(sample_position)) # erreur moyenne
+            grad[1] = somme_erreur[1]/(1*len(sample_position)) 
+    
+            if (somme_erreur[0]+somme_erreur[1]) < (somme_erreur_av[0]+somme_erreur_av[1]) :
+                self.network.backPropagate(grad, 0.9,0) # grad, pas d'app, moment : permet de lisser la trajectoire
+                somme_erreur_av = somme_erreur
+                n_it+=1
+                #print("n_it = "+ str(n_it)+"\n")
+		
+            else :
+                self.training = False
+                print("Training done after " + str(n_it) +" iterations !")
+		
+	    
+    
+    
         while self.running:
             debut = time.time()
             command = self.network.runNN([0,0,0]) # propage erreur et calcul vitesses roues instant t
-            
-            #pondération des erreurs           
+	    
+	    #pondération des erreurs           
             alpha_x = 1/(2*L)
             alpha_y = 1/(2*L)
             alpha_teta = 1.0/(math.pi)
-            
-                       
+	    
+		       
             self.robot.set_motor_velocity(command) # applique vitesses roues instant t,                     
             time.sleep(0.050) # attend delta t
             position = self.robot.get_position() #  obtient nvlle pos robot instant t+1       
-            
-            network_input[0] = (position[0]-target[0])*self.alpha[0]
-            network_input[1] = (position[1]-target[1])*self.alpha[1]
-            network_input[2] = (position[2]-target[2]-theta_s(position[0], position[1]))*self.alpha[2]
+	    
+	    #network_input[0] = (position[0]-target[0])*self.alpha[0]
+	    #network_input[1] = (position[1]-target[1])*self.alpha[1]
+	    #network_input[2] = (position[2]-target[2]-theta_s(position[0], position[1]))*self.alpha[2]
 
       
         self.robot.set_motor_velocity([0,0]) # stop  apres arret  du prog d'app
