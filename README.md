@@ -15,6 +15,7 @@ A FAIRE :
  - apprentissage : écrire la méthode train() (dans Offline_trainer) , calcul de l'erreur ,  rétroprog avec propag des erreurs
  - run : calcul position relative de la cible, vérifier qu'on envoie la commande aux roues
  - ne pas oublier de faire * M pour la vitesse aux roues (voir normalisation par L et pi)
+ - GRADIENT A REFLECHIR car l'évolution de l'erreur non cohérente
  
  méthode à suivre : pour entrainer le réseau faire une seule boucle où passent tous les exemples, puis ensuite calculer une erreur moyenne pour le gradient
 
