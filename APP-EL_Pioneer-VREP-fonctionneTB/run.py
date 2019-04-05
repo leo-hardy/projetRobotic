@@ -26,32 +26,27 @@ if choice == 'y':
         for j in range(2):
             network.wo[i][j] = json_obj["output_weights"][i][j]
 
-trainer = OnlineTrainer(robot, network)
-offlinetrainer = OfflineTrainer(robot, network)
+
+
+choice0 = ''
+while choice0!='on' and choice0!='off' :
+    choice0 = input('Do you want to learn online or offline? (on/off) --> ')
+
+if choice0 == 'on':
+    trainer = OnlineTrainer(robot, network)
+elif choice0 == 'off':
+    trainer = OfflineTrainer(robot, network)
+
 
 choice1 = ''
-while choice1!='on' and choice1!='off' :
-    choice1 = input('Do you want to learn online or offline? (on/off) --> ')
+while choice1!='y' and choice1 !='n':
+    choice1 = input('Do you want to learn? (y/n) --> ')
 
-if choice1 == 'on':
-    choice = ''
-    while choice!='y' and choice !='n':
-        choice = input('Do you really want to learn online? (y/n) --> ')
-    
-    if choice == 'y':
-        trainer.training = True
-    elif choice == 'n':
-        trainer.training = False    
+if choice1 == 'y':
+    trainer.training = True
+elif choice1 == 'n':
+    trainer.training = False
 
-if choice1 == 'off':
-    choice = ''    
-    while choice!='y' and choice !='n':
-        choice = input('Do you really want to learn offline? (y/n) --> ') 
-    
-        if choice == 'y':
-            offlinetrainer.train()
-        elif choice == 'n':
-            break        
 
 target = input("Enter the first target : x y radian --> ")
 target = target.split()
