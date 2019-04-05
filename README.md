@@ -20,3 +20,8 @@ A FAIRE :
 
 
 Remarques : slide 147 erreur pour les commandes 2, 3, 5 et 6
+
+
+PROBLEMES :
+ - 1e essai : On avait systématiquement 1 seul parcours de la base d'apprentissage. La direction "droite" était priviligée légèrement.
+ on l'a forcé à faire 100 parcours de la boucle
