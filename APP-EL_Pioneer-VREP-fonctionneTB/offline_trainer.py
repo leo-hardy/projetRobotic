@@ -92,7 +92,18 @@ class OfflineTrainer:
 	#il faut que quand training soit True l'apprentissage soit lancé d'un bloc. Il faut qu'il soit False qd le robot bouge
     def train(self, target):
         
-        position = self.robot.get_position()
+
+
+
+
+
+
+
+
+
+
+
+		position = self.robot.get_position()
 
         network_input = [0, 0, 0]
         network_input[0] = (position[0]-target[0])*self.alpha[0]
