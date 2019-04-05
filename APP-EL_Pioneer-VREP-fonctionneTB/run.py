@@ -10,7 +10,7 @@ import threading
 #On peut changer de robot mais il faut aussi changer la fonction de coût du robot qui est adaptée au modèle
 robot = VrepPioneerSimulation()
 #robot = Pioneer(rospy)
-HL_size= 10
+HL_size= 9
 #nbre neurons of Hiden layer
 network = NN(3, HL_size, 2)
 

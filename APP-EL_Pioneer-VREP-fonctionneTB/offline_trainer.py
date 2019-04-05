@@ -38,7 +38,7 @@ for k in [(3/4),(1/2),(1/4)]:
     [-1,1]]#8
 
 #génération du point final   #9
-sample_position += [[0,0,0]]
+sample_position += [[0,0,0]]   #len(sample_position) = 775 
 sample_command += [[0,0]]
     
                 
@@ -93,7 +93,7 @@ class OfflineTrainer:
     def train(self, target):
 	
 
-        somme_erreur_av = [len(sample_position)*4,len(sample_position)*4] #erreur maximum 
+        somme_erreur_av = [len(sample_position)*4,len(sample_position)*4] #erreur maximum, 
         n_it = 0
     
         while self.training:
@@ -114,38 +114,51 @@ class OfflineTrainer:
             grad[0] = somme_erreur[0]/(1*len(sample_position)) # erreur moyenne
             grad[1] = somme_erreur[1]/(1*len(sample_position)) 
     
-            if (somme_erreur[0]+somme_erreur[1]) < (somme_erreur_av[0]+somme_erreur_av[1]) :
+    
+	    #version avec arrêt au bout de k itérations
+            for k in range(100):
                 self.network.backPropagate(grad, 0.9,0) # grad, pas d'app, moment : permet de lisser la trajectoire
                 somme_erreur_av = somme_erreur
-                n_it+=1
-                #print("n_it = "+ str(n_it)+"\n")
+                n_it+=1	
 		
-            else :
-                self.training = False
-                print("Training done after " + str(n_it) +" iterations !")
+            self.training = False
+            print("somme_erreur = ["+str(somme_erreur[0])+","+str(somme_erreur[1])+"]")
+            print("Training done after " + str(n_it) +" iterations !")	
+	    		
+    
+	    #version avec arrêt quand l'erreure augmente
+            #if (somme_erreur[0]+somme_erreur[1]) < (somme_erreur_av[0]+somme_erreur_av[1]) :
+                #self.network.backPropagate(grad, 0.9,0) # grad, pas d'app, moment : permet de lisser la trajectoire
+                #somme_erreur_av = somme_erreur
+                #n_it+=1
+                ##print("n_it = "+ str(n_it)+"\n")
+		
+            #else :
+                #self.training = False
+                #print("Training done after " + str(n_it) +" iterations !")
 		
 	    
     
     
         while self.running:
+	    
             debut = time.time()
-            command = self.network.runNN([0,0,0]) # propage erreur et calcul vitesses roues instant t
 	    
-	    #pondération des erreurs           
-            alpha_x = 1/(2*L)
-            alpha_y = 1/(2*L)
-            alpha_teta = 1.0/(math.pi)
+            position = self.robot.get_position()
 	    
-		       
+            network_input = [0, 0, 0]
+	    
+            network_input[0] = ( (target[0]-position[0])*math.cos(position[2])-(target[1]-position[1])*math.sin(position[2]) )*self.alpha[0]
+            network_input[1] = ( (target[0]-position[0])*math.sin(position[2])-(target[1]-position[1])*math.cos(position[2]) )*self.alpha[1]
+            network_input[2] = ( position[2]-target[2]-theta_s(position[0], position[1]) )*self.alpha[2]
+	    
+		
+            command = self.network.runNN(network_input) # propage erreur et calcul vitesses roues instant t
+	          
             self.robot.set_motor_velocity(command) # applique vitesses roues instant t,                     
             time.sleep(0.050) # attend delta t
-            position = self.robot.get_position() #  obtient nvlle pos robot instant t+1       
-	    
-	    #network_input[0] = (position[0]-target[0])*self.alpha[0]
-	    #network_input[1] = (position[1]-target[1])*self.alpha[1]
-	    #network_input[2] = (position[2]-target[2]-theta_s(position[0], position[1]))*self.alpha[2]
-
-      
+            
+            
         self.robot.set_motor_velocity([0,0]) # stop  apres arret  du prog d'app
         #position = self.robot.get_position() #  obtient nvlle pos robot instant t+1
                 #Teta_t=position[2]
