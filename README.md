@@ -16,3 +16,6 @@ A FAIRE :
  - run : calcul position relative de la cible, vérifier qu'on envoie la commande aux roues
  
  méthode à suivre : pour entrainer le réseau faire une seule boucle où passent tous les exemples, puis ensuite calculer une erreur moyenne pour le gradient
+
+
+Remarques : slide 147 erreur pour les commandes 2, 3, 5 et 6
