@@ -9,13 +9,24 @@ La base du code pour la commande du robot vient d'un autre projet.
 
 
 
-FAIT : construction de la liste des points et des commandes correspondantes et d'un fichier Offline_trainer.py
+FAIT : 
+ - construction de la liste des points et des commandes correspondantes et d'un fichier Offline_trainer.py
+ - apprentissage : écrire la méthode train() (dans Offline_trainer) , calcul de l'erreur ,  rétroprog avec propag des erreurs
 
 A FAIRE : 
- - apprentissage : écrire la méthode train() (dans Offline_trainer) , calcul de l'erreur ,  rétroprog avec propag des erreurs
+ 
  - run : calcul position relative de la cible, vérifier qu'on envoie la commande aux roues
  - ne pas oublier de faire * M pour la vitesse aux roues (voir normalisation par L et pi)
  - GRADIENT A REFLECHIR car l'évolution de l'erreur non cohérente
+ 
+ RECHERCHE DES ERREURS :
+ - comparer les poids offline/attendus (online) -> déterminer si l'erreure viens des poids
+ - regarder l'évolution de l'erreure et des poids
+ - Apprentissage suffisant ? repasser plusieurs fois la base d'apprentissage ?
+ - Correction des poids suffisament efficace ?
+ - Valeur deu gradient changée ?
+ - 100 fois tous les cas ou tous les cas 100 fois ?
+ - Formule du gradient correct
  
  méthode à suivre : pour entrainer le réseau faire une seule boucle où passent tous les exemples, puis ensuite calculer une erreur moyenne pour le gradient
 
