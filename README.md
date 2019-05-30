@@ -39,3 +39,8 @@ Remarques :
 PROBLEMES :
  - 1e essai : On avait systématiquement 1 seul parcours de la base d'apprentissage. La direction "droite" était priviligée légèrement.
  on l'a forcé à faire 100 parcours de la boucle
+ 
+ RESULTATS
+  - avec 100 itérations : saturations du réseau
+      - Maxime : plus on enlève de cas moins i y a satturation et on voit une réaction du robot
+      - Léo : ceci combiné au paramètre N de la backProp = 0, le robot commence systematiqmt par s'aligner face à la cible, puis la rejoint ou la fuit
