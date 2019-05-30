@@ -1,17 +1,19 @@
+# coding: utf-8
+
 import time
 import math
 
-L = 3 #demi-longueur du carré explorable
-i,j,k = 1,1,1 #coefficients de discrétisations 
+L = 3 #demi-longueur du carrï¿½ explorable
+i,j,k = 1,1,1 #coefficients de discrï¿½tisations 
 theta = 0
 M = 1 #vitesse angulaire max des roues en sortie
 position= [0,0,0]
 pi = math.pi
-sample_position = [] #liste des positions cibles (ds le repère du robot) finales
+sample_position = [] #liste des positions cibles (ds le repere du robot) finales
 sample_command = [] #liste des commandes des roues finales
 
-#génération de la base de test normalisee
-#boucle pour générer les combinaisons 1 à 6
+#gï¿½nï¿½ration de la base de test normalisee
+#boucle pour gï¿½nï¿½rer les combinaisons 1 ï¿½ 6
 for i in [1/4, 1/2, 3/4, 1] :
     for j in [1/4, 1/2, 3/4, 1] :
         for theta in [-pi ,-(3*pi)/4,-pi/2,-pi/4,0,pi/4,pi/2,3*pi/4] :
@@ -29,7 +31,7 @@ for i in [1/4, 1/2, 3/4, 1] :
             [-1,1],#5
             [1,-1]]#6
             
-#boucle pour générer les combinaisons 7 et 8
+#boucle pour generer les combinaisons 7 et 8
 for k in [(3/4),(1/2),(1/4)]:
     sample_position += [[0,0,-1*(pi*k)/(2*pi)],#7 
     [0,0,pi*k/(2*pi)]]#8
@@ -37,7 +39,7 @@ for k in [(3/4),(1/2),(1/4)]:
     sample_command += [[1,-1],#7
     [-1,1]]#8
 
-#génération du point final   #9
+#gï¿½nï¿½ration du point final   #9
 sample_position += [[0,0,0]]   #len(sample_position) = 775 
 sample_command += [[0,0]]
     
@@ -54,7 +56,7 @@ sample_command += [[0,0]]
          #[0,0,pi*k],#8
          #[0,0,0]]#9
 
-#liste des sorties désirées
+#liste des sorties dï¿½sirï¿½es
 #L_q = [[M,M],#1
        #[M,-M],#2
        #[-M,M],#3
@@ -86,68 +88,65 @@ class OfflineTrainer:
         self.robot = robot
         self.network = NN
 
-        self.alpha = [1/(2*L),1/(2*L),1/(2*math.pi)]  # normalition avec limite du monde cartesien = -3m à + 3m
-        #pourquoi pas avec 1/L ? sinon on va de -0.5 à 0.5.
+        self.alpha = [1/(2*L),1/(2*L),1/(2*math.pi)]  # normalition avec limite du monde cartesien = -3m ï¿½ + 3m
+#pourquoi pas avec 1/L ? sinon on va de -0.5 a 0.5.
 
-	#il faut que quand training soit True l'apprentissage soit lancé d'un bloc. Il faut qu'il soit False qd le robot bouge
+#il faut que quand training soit True l'apprentissage soit lancï¿½ d'un bloc. Il faut qu'il soit False qd le robot bouge
     def train(self, target):
-	
 
         somme_erreur_av = [len(sample_position)*4,len(sample_position)*4] #erreur maximum, 
         n_it = 0
     
         while self.training:
-	    
+
             somme_erreur = [0,0]
-	    #calcul de l'erreur
+            #calcul de l'erreur
             
-            for i in range(len(sample_position)) :
-                command = self.network.runNN(sample_position[i]) # propage erreur et calcul vitesses roues instant t
-                erreur = [(command[0]-sample_command[i][0])**2,(command[1]-sample_command[i][1])**2]
-                somme_erreur[0] += erreur[0]
-                somme_erreur[1] += erreur[1]
-		
-            #print("somme_erreur_av = ["+str(somme_erreur_av[0])+","+str(somme_erreur_av[1])+"]")
-            #print("somme_erreur = ["+str(somme_erreur[0])+","+str(somme_erreur[1])+"]")	    
-    
-            grad = [0,0]
-            grad[0] = somme_erreur[0]/(1*len(sample_position)) # erreur moyenne
-            grad[1] = somme_erreur[1]/(1*len(sample_position)) 
-    
-    
-	    #version avec arrêt au bout de k itérations
             for k in range(100):
+                for i in range(len(sample_position)) :
+                    command = self.network.runNN(sample_position[i]) # propage erreur et calcul vitesses roues instant t
+                    erreur = [(command[0]-sample_command[i][0])**2,(command[1]-sample_command[i][1])**2]
+                    somme_erreur[0] += erreur[0]
+                    somme_erreur[1] += erreur[1]
+    
+                #print("somme_erreur_av = ["+str(somme_erreur_av[0])+","+str(somme_erreur_av[1])+"]")
+                #print("somme_erreur = ["+str(somme_erreur[0])+","+str(somme_erreur[1])+"]")	    
+        
+                grad = [0,0]
+                grad[0] = somme_erreur[0]/(1*len(sample_position)) # erreur moyenne
+                grad[1] = somme_erreur[1]/(1*len(sample_position)) 
+        
+    
+            #version avec arret au bout de k iterations
+            
                 self.network.backPropagate(grad, 0.9,0) # grad, pas d'app, moment : permet de lisser la trajectoire
                 somme_erreur_av = somme_erreur
                 n_it+=1	
-		
+
             self.training = False
             print("somme_erreur = ["+str(somme_erreur[0])+","+str(somme_erreur[1])+"]")
             print("Training done after " + str(n_it) +" iterations !")	
-	    		
     
-	    #version avec arrêt quand l'erreure augmente
+            #version avec arret quand l'erreure augmente
             #if (somme_erreur[0]+somme_erreur[1]) < (somme_erreur_av[0]+somme_erreur_av[1]) :
                 #self.network.backPropagate(grad, 0.9,0) # grad, pas d'app, moment : permet de lisser la trajectoire
                 #somme_erreur_av = somme_erreur
                 #n_it+=1
                 ##print("n_it = "+ str(n_it)+"\n")
-		
+
             #else :
                 #self.training = False
                 #print("Training done after " + str(n_it) +" iterations !")
-		
-	    
-    
-    
+
+
         while self.running:
-	    
+
             debut = time.time()
-	    
+
             position = self.robot.get_position()
-	    
+
             network_input = [0, 0, 0]
-	    
+
             network_input[0] = ( (target[0]-position[0])*math.cos(position[2])-(target[1]-position[1])*math.sin(position[2]) )*self.alpha[0]
             network_input[1] = ( (target[0]-position[0])*math.sin(position[2])-(target[1]-position[1])*math.cos(position[2]) )*self.alpha[1]
             network_input[2] = ( position[2]-target[2]-theta_s(position[0], position[1]) )*self.alpha[2]

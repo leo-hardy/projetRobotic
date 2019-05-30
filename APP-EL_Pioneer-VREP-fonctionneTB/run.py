@@ -1,3 +1,5 @@
+# coding: utf-8
+
 from BackProp_Python_v2 import NN
 from vrep_pioneer_simulation import VrepPioneerSimulation
 from rdn import Pioneer # rdn pour ROS avec le pioneer
@@ -7,7 +9,7 @@ from offline_trainer import OfflineTrainer
 import json
 import threading
 
-#On peut changer de robot mais il faut aussi changer la fonction de coût du robot qui est adaptée au modèle
+#On peut changer de robot mais il faut aussi changer la fonction de coï¿½t du robot qui est adaptï¿½e au modï¿½le
 robot = VrepPioneerSimulation()
 #robot = Pioneer(rospy)
 HL_size= 9
