@@ -45,7 +45,7 @@ class OnlineTrainer:
             alpha_y = 1 / (2 * L)
             alpha_teta = 1.0 / (math.pi)
 
-            # fonction de co�t avant le d�placement
+            # fonction de cout avant le deplacement
             crit_av = alpha_x * alpha_x * (position[0] - target[0]) * (position[0] - target[0]) + alpha_y * alpha_y * (
                     position[1] - target[1]) * (position[1] - target[1]) + alpha_teta * alpha_teta * (
                               position[2] - target[2] - theta_s(position[0], position[1])) * (

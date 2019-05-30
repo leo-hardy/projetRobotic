@@ -12,8 +12,10 @@ import threading
 # On peut changer de robot mais il faut aussi changer la fonction de co�t du robot qui est adapt�e au mod�le
 robot = VrepPioneerSimulation()
 # robot = Pioneer(rospy)
+
 HL_size = 9
 # nbre neurons of Hiden layer
+
 network = NN(3, HL_size, 2)
 
 choice = input('Do you want to load previous network? (y/n) --> ')

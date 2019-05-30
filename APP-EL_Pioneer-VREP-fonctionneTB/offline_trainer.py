@@ -3,8 +3,8 @@
 import time
 import math
 
-L = 3  # demi-longueur du carr� explorable
-i, j, k = 1, 1, 1  # coefficients de discr�tisations
+L = 3  # demi-longueur du carre explorable
+i, j, k = 1, 1, 1  # coefficients de discretisations
 theta = 0
 M = 1  # vitesse angulaire max des roues en sortie
 position = [0, 0, 0]
@@ -17,7 +17,7 @@ sample_command = []  # liste des commandes des roues finales
 for i in [1 / 4, 1 / 2, 3 / 4, 1]:
     for j in [1 / 4, 1 / 2, 3 / 4, 1]:
         for theta in [-pi, -(3 * pi) / 4, -pi / 2, -pi / 4, 0, pi / 4, pi / 2, 3 * pi / 4]:
-            sample_position += [[1 / i, 0, theta / (2 * pi)],  # 1
+            sample_position += [[1 * i, 0, theta / (2 * pi)],  # 1
                                 [1 * i, 1 * j, theta / (2 * pi)],  # 2
                                 [-1 * i, 1 * j, theta / (2 * pi)],  # 3
                                 [-1 * i, 0, theta / (2 * pi)],  # 4
@@ -39,7 +39,7 @@ for k in [(3 / 4), (1 / 2), (1 / 4)]:
     sample_command += [[1, -1],  # 7
                        [-1, 1]]  # 8
 
-# g�n�ration du point final   #9
+# generation du point final   #9
 sample_position += [[0, 0, 0]]  # len(sample_position) = 775
 sample_command += [[0, 0]]
 
@@ -84,6 +84,9 @@ class OfflineTrainer:
         self.robot = robot
         self.network = NN
 
+        """ attention """
+        self.training = True
+
         self.alpha = [1 / (2 * L), 1 / (2 * L),
                       1 / (2 * math.pi)]  # normalition avec limite du monde cartesien = -3m � + 3m
 
@@ -93,7 +96,9 @@ class OfflineTrainer:
     # d'un bloc. Il faut qu'il soit False qd le robot bouge
     def train(self, target):
 
-        somme_erreur_av = [len(sample_position) * 4, len(sample_position) * 4]  # erreur maximum,
+        somme_erreur_av = [len(sample_position) * 4, len(sample_position) * 4]  # erreur maximum
+
+        # nombre d'iterations
         n_it = 0
 
         while self.training:
@@ -101,10 +106,13 @@ class OfflineTrainer:
             somme_erreur = [0, 0]
             # calcul de l'erreur
 
+            print(sample_position)
             for k in range(100):
                 for i in range(len(sample_position)):
-                    command = self.network.runNN(
-                        sample_position[i])  # propage erreur et calcul vitesses roues instant t
+
+                    command = self.network.runNN(sample_position[i])
+                    # propage erreur et calcul vitesses roues instant t
+
                     erreur = [(command[0] - sample_command[i][0]) ** 2, (command[1] - sample_command[i][1]) ** 2]
                     somme_erreur[0] += erreur[0]
                     somme_erreur[1] += erreur[1]
