@@ -8,6 +8,10 @@ import string
 
 class NN:
     def __init__(self, NI, NH, NO):
+        """ ni for input neurons
+            nh for hideen layers
+            no for output neurons
+            """
         self.newSigmoid = False
         # number of nodes in layers
         self.ni = NI  # +1 #for bias
@@ -17,20 +21,27 @@ class NN:
         # initialize node-activations
         self.ai, self.ah, self.ao = [], [], []
         self.ai = [1.0] * self.ni
+
+        '''   !!!   '''
         self.ai[self.ni - 1] = random.uniform(-1, 1)
+
         self.ah = [1.0] * self.nh
         self.ao = [1.0] * self.no
 
         # create node weight matrices
         self.wi = makeMatrix(self.ni, self.nh)
         self.wo = makeMatrix(self.nh, self.no)
+
         # create bias
         self.b = [0.0] * (self.nh + self.no)
+
         # momentum for the bias
         self.bmom = [0.0] * (self.nh + self.no)
+
         # initialize node weights to random vals
         randomizeMatrix(self.wi, -1., 1.)
         randomizeMatrix(self.wo, -1., 1.)
+
         # create last change in weights matrices for momentum
         self.ci = makeMatrix(self.ni, self.nh)
         self.co = makeMatrix(self.nh, self.no)
@@ -41,10 +52,10 @@ class NN:
         if len(inputs) != self.ni:
             print("incorrect number of inputs")
 
-        #    for i in range(self.ni-1):
+        # for i in range(self.ni-1):
         for i in range(self.ni):
             self.ai[i] = inputs[i]
-
+            
         for j in range(self.nh):
             # sum = 0.0
             # init with the bias
@@ -72,8 +83,8 @@ class NN:
         # we want to find the instantaneous rate of change of ( error with respect to weight from node j to node k)
         # output_delta is defined as an attribute of each ouput node. It is not the final rate we need.
         # To get the final rate we must multiply the delta by the activation of the hidden layer node in question.
-        # This multiplication is done according to the chain rule as we are taking the derivative of the activation function
-        # of the ouput node.
+        # This multiplication is done according to the chain rule as we are taking the derivative of
+        # the activation function of the ouput node.
         # dE/dw[j][k] = (t[k] - ao[k]) * s'( SUM( w[j][k]*ah[j] ) ) * ah[j]
         output_deltas = [0.0] * self.no
         for k in range(self.no):

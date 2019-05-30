@@ -3,8 +3,8 @@
 import time
 import math
 
-L = 3  # demi-longueur du carr� explorable
-i, j, k = 1, 1, 1  # coefficients de discr�tisations
+L = 3  # demi-longueur du carre explorable
+i, j, k = 1, 1, 1  # coefficients de discretisations
 theta = 0
 M = 1  # vitesse angulaire max des roues en sortie
 position = [0, 0, 0]
@@ -84,7 +84,8 @@ class OfflineTrainer:
         self.robot = robot
         self.network = NN
 
-        self.alpha = [1 / (2 * L), 1 / (2 * L), 1 / (2 * math.pi)]  # normalition avec limite du monde cartesien = -3m � + 3m
+        self.alpha = [1 / (2 * L), 1 / (2 * L),
+                      1 / (2 * math.pi)]  # normalition avec limite du monde cartesien = -3m � + 3m
 
     # pourquoi pas avec 1/L ? sinon on va de -0.5 a 0.5, de même avec 1/2pi !
 
@@ -93,7 +94,7 @@ class OfflineTrainer:
     def train(self, target):
 
         somme_erreur_av = [len(sample_position) * 4, len(sample_position) * 4]  # erreur maximum,
-        print("\nsomme_erreure maximale (calcul initial) =" + str(somme_erreur_av[0]) + "," + str(somme_erreur_av[1]) + "]")  
+        print("\nsomme_erreure maximale (calcul initial) =" + str(somme_erreur_av[0]) + "," + str(somme_erreur_av[1]) + "]")
         n_it = 0
 
         while self.training:
@@ -101,6 +102,7 @@ class OfflineTrainer:
             somme_erreur = [0, 0]
             # calcul de l'erreur
 
+            print(sample_position)
             for k in range(100):
                 for i in range(len(sample_position)):
                     command = self.network.runNN(sample_position[i])  # propage erreur et calcule la  vitesse des roues instant t
@@ -122,7 +124,7 @@ class OfflineTrainer:
                 n_it += 1
 
             self.training = False
-            
+
             print("\nsomme_erreur finale = [" + str(somme_erreur[0]) + "," + str(somme_erreur[1]) + "]")
             print("\nTraining done after " + str(n_it) + " iterations !")
 
