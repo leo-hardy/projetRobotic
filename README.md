@@ -31,7 +31,9 @@ A FAIRE :
  méthode à suivre : pour entrainer le réseau faire une seule boucle où passent tous les exemples, puis ensuite calculer une erreur moyenne pour le gradient
 
 
-Remarques : slide 147 erreur pour les commandes 2, 3, 5 et 6
+Remarques : 
+ - slide 147 erreur pour les commandes 2, 3, 5 et 6
+ - même quand le robot à appris en online, si on utilise les poids issu de cette apprentissage, le robot est quand même moins réactif est précis que quand il est en train d'apprendre.
 
 
 PROBLEMES :
