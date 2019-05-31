@@ -16,6 +16,19 @@ HL_size = 9
 # nbre neurons of Hiden layer
 network = NN(3, HL_size, 2)
 
+choice = input('Do you want to load previous network? (y/n) --> ')
+if choice == 'y':
+    with open('last_w.json') as fp:
+        json_obj = json.load(fp)
+
+    for i in range(3):
+        for j in range(HL_size):
+            network.wi[i][j] = json_obj["input_weights"][i][j]
+    for i in range(HL_size):
+        for j in range(2):
+            network.wo[i][j] = json_obj["output_weights"][i][j]
+
+
 robot = VrepPioneerSimulation()
 trainer = OfflineTrainer(robot, network)
 target = [0., 0., 0.]

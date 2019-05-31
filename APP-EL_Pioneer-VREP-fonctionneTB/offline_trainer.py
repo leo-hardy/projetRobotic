@@ -141,7 +141,7 @@ class OfflineTrainer:
             L_erreures_normalisees_base_test = []
             
             #print(sample_position)
-            for k in range(20):
+            for k in range(100):
                 
                 # calcul de l'erreur cummulée sur toute la base d'exemple
                 
@@ -177,7 +177,7 @@ class OfflineTrainer:
                 grad[0] = somme_erreur[0] / (1 * len(sample_position))  # erreur moyenne
                 grad[1] = somme_erreur[1] / (1 * len(sample_position))
 
-                self.network.backPropagate(grad, 0.01, 0)  # grad, pas d'app, moment : permet de lisser la trajectoire
+                self.network.backPropagate(grad, 0.005, 0)  # grad, pas d'app, moment : permet de lisser la trajectoire
                 somme_erreur_av = somme_erreur
                 n_it += 1
                 #Fin de l'itération pour la base d'apprentissage, début pour la base de test
