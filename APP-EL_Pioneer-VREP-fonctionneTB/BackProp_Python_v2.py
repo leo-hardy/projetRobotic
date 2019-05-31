@@ -20,7 +20,7 @@ class NN:
 
         # initialize node-activations
         self.ai, self.ah, self.ao = [], [], []
-        self.ai = [1.0] * self.ni
+        self.ai = [random.uniform(-1, 1)] * self.ni
 
         '''   !!!   '''
         self.ai[self.ni - 1] = random.uniform(-1, 1)

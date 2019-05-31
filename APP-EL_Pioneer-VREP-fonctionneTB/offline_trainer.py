@@ -3,6 +3,7 @@
 import time
 import math
 
+
 L = 3  # demi-longueur du carre explorable
 i, j, k = 1, 1, 1  # coefficients de discretisations
 theta = 0
@@ -17,12 +18,12 @@ sample_command = []  # liste des commandes des roues finales
 for i in [1 / 4, 1 / 2, 3 / 4, 1]:
     for j in [1 / 4, 1 / 2, 3 / 4, 1]:
         for theta in [-pi, -(3 * pi) / 4, -pi / 2, -pi / 4, 0, pi / 4, pi / 2, 3 * pi / 4]:
-            sample_position += [[1 * i, 0, theta / (pi)],  # 1
-                                [1 * i, 1 * j, theta / (pi)],  # 2
-                                [-1 * i, 1 * j, theta / (pi)],  # 3
-                                [-1 * i, 0, theta / (pi)],  # 4
-                                [-1 * i, -1 * j, theta / (pi)],  # 5
-                                [1 * i, -1 * j, theta / (pi)]]  # 6
+            sample_position += [[1 * i, 0, theta / pi],  # 1
+                                [1 * i, 1 * j, theta / pi],  # 2
+                                [-1 * i, 1 * j, theta / pi],  # 3
+                                [-1 * i, 0, theta / pi],  # 4
+                                [-1 * i, -1 * j, theta / pi],  # 5
+                                [1 * i, -1 * j, theta / pi]]  # 6
 
             sample_command += [[1, 1],  # 1
                                [-1, 1],  # 2
@@ -85,37 +86,54 @@ class OfflineTrainer:
         self.network = NN
 
         self.alpha = [1 / (2 * L), 1 / (2 * L),
-                      1 / (2 * math.pi)]  # normalition avec limite du monde cartesien = -3m � + 3m
+                      1 / (math.pi)]  # normalition avec limite du monde cartesien = -3m � + 3m
 
     # pourquoi pas avec 1/L ? sinon on va de -0.5 a 0.5, de même avec 1/2pi !
 
     # il faut que quand training soit True l'apprentissage soit lance
     # d'un bloc. Il faut qu'il soit False qd le robot bouge
+    
+    
     def train(self, target):
+        
+        n_it = 0
 
         somme_erreur_av = [len(sample_position) * 4, len(sample_position) * 4]  # erreur maximum,
         print("\nsomme_erreure maximale (calcul initial) = " + str(somme_erreur_av)+'\n')
-        n_it = 0
+        
 
         while self.training:
 
             
 
             #print(sample_position)
-            for k in range(10):
+            for k in range(20):
                 
                 # calcul de l'erreur cummulée sur toute la base d'exemple
                 somme_erreur = [0, 0]
+                somme_erreur_carré = [0,0]
                 print('\n')
                               
                 
                 for i in range(len(sample_position)):
                     command = self.network.runNN(sample_position[i])  # propage erreur et calcule la  vitesse des roues instant t
-                    erreur = [(command[0] - sample_command[i][0]) ** 2, (command[1] - sample_command[i][1]) ** 2]
+                    erreur = [(command[0] - sample_command[i][0]), (command[1] - sample_command[i][1])]
                     somme_erreur[0] += erreur[0]
                     somme_erreur[1] += erreur[1]
+                    
+                    somme_erreur_carré[0] += erreur[0]**2
+                    somme_erreur_carré[1] += erreur[1]**2
+                    
+                    #self.network.backPropagate(erreur, 0.0001, 0) ne marche pas bien
+                    
+                    '''
+                    if (i == 10) :
+                        print("Pour le "+str(i)+"ème cas de la base d'exemple (" +str(sample_position[i])+")")
+                        print("commande pour la roue gauche reçue : " + str(command[0]))
+                        print("commande pour la roue gauche attendue : " + str(sample_command[i][0])+"\n")  
+                    '''
 
-                print("A l'itération " + str(n_it) + ", somme_erreur = "+str(somme_erreur))
+                print("A l'itération " + str(n_it) + ", somme_erreur_carré = "+str(somme_erreur_carré))
                 # print("somme_erreur = ["+str(somme_erreur[0])+","+str(somme_erreur[1])+"]")
 
                 grad = [0, 0]
@@ -124,7 +142,7 @@ class OfflineTrainer:
 
                 # version avec arret au bout de k iterations
 
-                self.network.backPropagate(grad, 0.8, 0)  # grad, pas d'app, moment : permet de lisser la trajectoire
+                self.network.backPropagate(grad, 0.01, 0)  # grad, pas d'app, moment : permet de lisser la trajectoire
                 somme_erreur_av = somme_erreur
                 n_it += 1
 
@@ -152,11 +170,9 @@ class OfflineTrainer:
             network_input = [0, 0, 0]
 
             # calcul de la position relative de la cible dans le referentiel du robot
-            network_input[0] = ((target[0] - position[0]) * math.cos(position[2]) - (
-                    target[1] - position[1]) * math.sin(position[2])) * self.alpha[0]
-            network_input[1] = ((target[0] - position[0]) * math.sin(position[2]) - (
-                    target[1] - position[1]) * math.cos(position[2])) * self.alpha[1]
-            network_input[2] = (position[2] - target[2] - theta_s(position[0], position[1])) * self.alpha[2]
+            network_input[0] = ((target[0] - position[0]) * math.cos(position[2]) + (target[1] - position[1]) * math.sin(position[2])) * self.alpha[0]
+            network_input[1] = ((target[0] - position[0]) * (-1)*math.sin(position[2]) + (target[1] - position[1]) * math.cos(position[2])) * self.alpha[1]
+            network_input[2] = (position[2] - target[2]) * self.alpha[2]
 
             command = self.network.runNN(network_input)  # propage erreur et calcul vitesses roues instant t
             print("command =" + str(command))
