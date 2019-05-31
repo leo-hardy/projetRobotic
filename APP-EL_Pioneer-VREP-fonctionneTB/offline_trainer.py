@@ -94,23 +94,28 @@ class OfflineTrainer:
     def train(self, target):
 
         somme_erreur_av = [len(sample_position) * 4, len(sample_position) * 4]  # erreur maximum,
-        print("\nsomme_erreure maximale (calcul initial) =" + str(somme_erreur_av[0]) + "," + str(somme_erreur_av[1]) + "]")
+        print("\nsomme_erreure maximale (calcul initial) = " + str(somme_erreur_av)+'\n')
         n_it = 0
 
         while self.training:
 
-            somme_erreur = [0, 0]
-            # calcul de l'erreur
+            
 
-            print(sample_position)
-            for k in range(100):
+            #print(sample_position)
+            for k in range(10):
+                
+                # calcul de l'erreur cummulée sur toute la base d'exemple
+                somme_erreur = [0, 0]
+                print('\n')
+                              
+                
                 for i in range(len(sample_position)):
                     command = self.network.runNN(sample_position[i])  # propage erreur et calcule la  vitesse des roues instant t
                     erreur = [(command[0] - sample_command[i][0]) ** 2, (command[1] - sample_command[i][1]) ** 2]
                     somme_erreur[0] += erreur[0]
                     somme_erreur[1] += erreur[1]
 
-                print("A l'itération " + str(n_it) + ", somme_erreur = ["+str(somme_erreur[0])+","+str(somme_erreur[1])+"]")
+                print("A l'itération " + str(n_it) + ", somme_erreur = "+str(somme_erreur))
                 # print("somme_erreur = ["+str(somme_erreur[0])+","+str(somme_erreur[1])+"]")
 
                 grad = [0, 0]
@@ -119,13 +124,13 @@ class OfflineTrainer:
 
                 # version avec arret au bout de k iterations
 
-                self.network.backPropagate(grad, 0.9, 0)  # grad, pas d'app, moment : permet de lisser la trajectoire
+                self.network.backPropagate(grad, 0.8, 0)  # grad, pas d'app, moment : permet de lisser la trajectoire
                 somme_erreur_av = somme_erreur
                 n_it += 1
 
             self.training = False
 
-            print("\nsomme_erreur finale = [" + str(somme_erreur[0]) + "," + str(somme_erreur[1]) + "]")
+            #print("\nsomme_erreur finale = [" + str(somme_erreur[0]) + "," + str(somme_erreur[1]) + "]")
             print("\nTraining done after " + str(n_it) + " iterations !")
 
             # version avec arret quand l'erreure augmente
@@ -154,6 +159,7 @@ class OfflineTrainer:
             network_input[2] = (position[2] - target[2] - theta_s(position[0], position[1])) * self.alpha[2]
 
             command = self.network.runNN(network_input)  # propage erreur et calcul vitesses roues instant t
+            print("command =" + str(command))
 
 
             #faut il mmultiplier la commande par certains paramètres pour "dénormaliser la commande" ?
