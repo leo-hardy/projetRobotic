@@ -62,7 +62,7 @@ while (continue_running):
     thread.start()
 
     # Ask for stop running
-    input("Press Enter to stop the current training")
+    input("Press Enter to stop the current training\n")
     trainer.running = False
     choice = ''
     while choice != 'y' and choice != 'n':
