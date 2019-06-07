@@ -1,4 +1,4 @@
-"projetRobotic" 
+***projet de Robotique ***
 
 Créer un algo de machine learning (réseau de neurones) pour que le robot Pioneer se déplace jusqu'à la cible.
 Simulation sur V-rep.
@@ -7,6 +7,8 @@ L'entraînement du réseau se fait via une base d'exemples (points de l'espace d
 Le robot apprend alors à généraliser à depuis tout point de l'espace.
 
 La base du code pour la commande du robot vient d'un autre projet.
+
+
 
 Réalisé par Maxime LATGE et Léo HARDY
 Encadré par Patrick HENAFF
