@@ -21,10 +21,6 @@ class NN:
         # initialize node-activations
         self.ai, self.ah, self.ao = [], [], []
         self.ai = [random.uniform(-1, 1)] * self.ni
-
-        '''   !!!   '''
-        self.ai[self.ni - 1] = random.uniform(-1, 1)
-
         self.ah = [1.0] * self.nh
         self.ao = [1.0] * self.no
 
@@ -47,6 +43,11 @@ class NN:
         self.co = makeMatrix(self.nh, self.no)
 
     def runNN(self, inputs):
+        """
+        :param inputs: parametres qu'on rentre dans le réseau, normalises
+        :return: les valeurs des noeuds de sortie, relativement aux inputs
+        """
+
         # if len(inputs) != self.ni-1:
         # Update after changing how the bias are handled
         if len(inputs) != self.ni:
@@ -55,7 +56,7 @@ class NN:
         # for i in range(self.ni-1):
         for i in range(self.ni):
             self.ai[i] = inputs[i]
-            
+
         for j in range(self.nh):
             # sum = 0.0
             # init with the bias
@@ -75,8 +76,13 @@ class NN:
         # print(self.ao)
         return self.ao
 
-    # def backPropagate (self, targets, N, M):
     def backPropagate(self, grad, N, M):
+        """
+        :param grad: valeur du gradient calcule
+        :param N: pas de la back propagation
+        :param M: moment applique : rend compte de la résilience du réseau à changer avec la backprop
+        :return: False, apparemment
+        """
         # http://www.youtube.com/watch?v=aVId8KMsdUU&feature=BFa&list=LLldMCkmXl4j9_v0HeKdNcRA
 
         # calc output deltas
